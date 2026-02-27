@@ -218,43 +218,81 @@ Redis connection configurations for Cache and Pub/Sub.
 
 ## 🔧 Running the System
 
-### 1. Start Redis Instances
+### Option 1: Docker Compose (Recommended for Local Development)
 
 ```bash
-# Cache Redis
+# Start all Redis instances
+docker-compose up -d
+
+# Verify health
+docker-compose ps
+
+# Build and run tests
+cd integration-tests && mvn test
+```
+
+See [QUICKSTART.md](QUICKSTART.md) for detailed Docker instructions.
+
+### Option 2: Manual Setup
+
+#### 1. Start Redis Instances (6 terminals)
+
+```bash
+# Terminal 1 - Cache Redis
 redis-server redis-configs/caching/redis.conf
 
-# Session Store Redis
+# Terminal 2 - Session Store Redis
 redis-server redis-configs/session-store/redis.conf
 
-# Rate Limiting Redis
+# Terminal 3 - Rate Limiting Redis
 redis-server redis-configs/rate-limiting/redis.conf
 
-# Analytics Redis
+# Terminal 4 - Analytics Redis
 redis-server redis-configs/realtime-analytics/redis.conf
 
-# Pub/Sub Redis
+# Terminal 5 - Pub/Sub Redis
 redis-server redis-configs/pubsub/redis.conf
 
-# Distributed Locks Redis
+# Terminal 6 - Distributed Locks Redis
 redis-server redis-configs/distributed-lock/redis.conf
 ```
 
-### 2. Start Microservices
+#### 2. Build Shared Libraries
 
 ```bash
-# API Gateway (must start first for rate limiting)
+cd shared-libs/redis-config && mvn clean install -DskipTests
+cd ../cache-client && mvn clean install -DskipTests
+cd ../event-bus && mvn clean install -DskipTests
+```
+
+#### 3. Start Microservices (5 terminals)
+
+```bash
+# Terminal 1 - API Gateway (8080)
 cd api-gateway && mvn spring-boot:run
 
-# Flight Service
+# Terminal 2 - Flight Service (8081)
 cd flight-service && mvn spring-boot:run
 
-# Booking Service
+# Terminal 3 - Hotel Service (8084)
+cd hotel-service && mvn spring-boot:run
+
+# Terminal 4 - Booking Service (8082)
 cd booking-service && mvn spring-boot:run
 
-# Analytics Service (starts Pub/Sub listener)
+# Terminal 5 - Analytics Service (8083)
 cd analytics-service && mvn spring-boot:run
 ```
+
+### Option 3: CI/CD on GitHub (Automatic)
+
+Every push to `main` or `develop` automatically:
+- ✅ Starts PostgreSQL + all 6 Redis instances
+- ✅ Builds shared-libs and all microservices
+- ✅ Runs all integration tests
+- ✅ Generates test reports
+
+View results: **GitHub → Actions tab**
 
 ---
 
