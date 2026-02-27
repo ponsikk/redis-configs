@@ -10,6 +10,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: jdbc:postgresql://localhost:5432/analytics_db
+      DATABASE_USER: analytics
+      DATABASE_PASSWORD: analytics123
+
     services:
       # PostgreSQL Database
       postgres:
@@ -125,13 +130,14 @@ jobs:
     - name: Build shared-libs (in order)
       run: |
         echo "=== Building shared-libs ==="
-        cd shared-libs/redis-config
+
+        cd $GITHUB_WORKSPACE/shared-libs/redis-config
         mvn clean install -DskipTests
 
-        cd ../cache-client
+        cd $GITHUB_WORKSPACE/shared-libs/cache-client
         mvn clean install -DskipTests
 
-        cd ../event-bus
+        cd $GITHUB_WORKSPACE/shared-libs/event-bus
         mvn clean install -DskipTests
 
         echo "✅ Shared libraries built successfully!"
@@ -140,19 +146,19 @@ jobs:
       run: |
         echo "=== Building microservices ==="
 
-        cd api-gateway
+        cd $GITHUB_WORKSPACE/api-gateway
         mvn clean package -DskipTests
 
-        cd ../flight-service
+        cd $GITHUB_WORKSPACE/flight-service
         mvn clean package -DskipTests
 
-        cd ../hotel-service
+        cd $GITHUB_WORKSPACE/hotel-service
         mvn clean package -DskipTests
 
-        cd ../booking-service
+        cd $GITHUB_WORKSPACE/booking-service
         mvn clean package -DskipTests
 
-        cd ../analytics-service
+        cd $GITHUB_WORKSPACE/analytics-service
         mvn clean package -DskipTests
 
         echo "✅ All microservices built successfully!"

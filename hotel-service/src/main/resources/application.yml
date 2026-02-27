@@ -3,9 +3,9 @@ spring:
     name: hotel-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/hotel_analytics
-    username: postgres
-    password: postgres
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/hotel_analytics}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
 
   jpa:
     hibernate:

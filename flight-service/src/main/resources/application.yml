@@ -3,9 +3,9 @@ spring:
     name: flight-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/flight_analytics
-    username: postgres
-    password: postgres
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/flight_analytics}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
   jpa:
