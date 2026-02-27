@@ -64,6 +64,19 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Shared Libraries -->
+        <dependency>
+            <groupId>com.analytics.shared</groupId>
+            <artifactId>cache-client</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.analytics.shared</groupId>
+            <artifactId>event-bus</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
