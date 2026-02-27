@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # Redis Cache (6379) - LRU eviction, no persistence
+  redis-cache:
+    image: redis:7-alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 2gb --maxmemory-policy allkeys-lru --save "" --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Session Store (6380) - Volatile LRU, AOF persistence
+  redis-session:
+    image: redis:7-alpine
+    container_name: redis-session
+    ports:
+      - "6380:6379"
+    command: redis-server --maxmemory 1gb --maxmemory-policy volatile-lru --appendonly yes --appendfsync everysec
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Rate Limiting (6381) - Volatile TTL, high frequency expiration
+  redis-ratelimit:
+    image: redis:7-alpine
+    container_name: redis-ratelimit
+    ports:
+      - "6381:6379"
+    command: redis-server --maxmemory 512mb --maxmemory-policy volatile-ttl --hz 20 --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Analytics (6382) - LFU eviction, hybrid persistence
+  redis-analytics:
+    image: redis:7-alpine
+    container_name: redis-analytics
+    ports:
+      - "6382:6379"
+    command: redis-server --maxmemory 4gb --maxmemory-policy allkeys-lfu --save 900 1 --appendonly yes --activedefrag yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Pub/Sub (6383) - No eviction, no persistence
+  redis-pubsub:
+    image: redis:7-alpine
+    container_name: redis-pubsub
+    ports:
+      - "6383:6379"
+    command: redis-server --maxmemory 256mb --maxmemory-policy noeviction --save "" --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Distributed Locks (6384) - Maximum durability, AOF always
+  redis-locks:
+    image: redis:7-alpine
+    container_name: redis-locks
+    ports:
+      - "6384:6379"
+    command: redis-server --maxmemory 512mb --maxmemory-policy volatile-ttl --appendonly yes --appendfsync always --hz 20
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  default:
+    name: redis-network

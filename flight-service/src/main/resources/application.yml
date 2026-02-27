@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: flight-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/flight_analytics
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Redis Configurations for different use cases
+  redis:
+    # Caching Redis (port 6379)
+    cache:
+      host: localhost
+      port: 6379
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+
+    # Session Store Redis (port 6380)
+    session:
+      host: localhost
+      port: 6380
+      timeout: 3000ms
+
+    # Rate Limiting Redis (port 6381)
+    ratelimit:
+      host: localhost
+      port: 6381
+      timeout: 1000ms
+
+    # Analytics Redis (port 6382)
+    analytics:
+      host: localhost
+      port: 6382
+      timeout: 3000ms
+
+    # Pub/Sub Redis (port 6383)
+    pubsub:
+      host: localhost
+      port: 6383
+      timeout: 3000ms
+
+    # Distributed Lock Redis (port 6384)
+    lock:
+      host: localhost
+      port: 6384
+      timeout: 5000ms
+
+server:
+  port: 8081
+
+# Redisson Configuration (Distributed Locks)
+redisson:
+  address: redis://localhost:6384
+  connection-pool-size: 64
+  connection-minimum-idle-size: 10
+  timeout: 5000
+  retry-attempts: 3
+  retry-interval: 1500
+  threads: 16
+  netty-threads: 32
+  codec: org.redisson.codec.JsonJacksonCodec
+
+# Cache Configuration
+cache:
+  ttl:
+    flights: 900 # 15 minutes
+    routes: 3600 # 1 hour
+    airports: 86400 # 24 hours
+
+logging:
+  level:
+    com.analytics.flight: DEBUG
+    org.springframework.data.redis: DEBUG

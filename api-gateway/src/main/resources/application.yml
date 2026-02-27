@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: api-gateway
+
+  # Redis for Rate Limiting (port 6381)
+  redis:
+    ratelimit:
+      host: localhost
+      port: 6381
+      timeout: 1000ms
+
+    # Redis for Session Store (port 6380)
+    session:
+      host: localhost
+      port: 6380
+      timeout: 3000ms
+
+server:
+  port: 8080
+
+# Backend services
+backend:
+  flight-service: http://localhost:8081
+  booking-service: http://localhost:8082
+  analytics-service: http://localhost:8083
+
+# Rate limiting configuration
+ratelimit:
+  default:
+    requests: 100
+    window: 60  # seconds
+  endpoints:
+    search: 50
+    booking: 10
+
+logging:
+  level:
+    com.analytics.gateway: DEBUG

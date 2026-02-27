@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: hotel-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hotel_analytics
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  redis:
+    cache:
+      host: localhost
+      port: 6379
+    pubsub:
+      host: localhost
+      port: 6383
+
+server:
+  port: 8084
+
+cache:
+  ttl:
+    hotels: 900
+    cities: 3600
+
+logging:
+  level:
+    com.analytics.hotel: DEBUG

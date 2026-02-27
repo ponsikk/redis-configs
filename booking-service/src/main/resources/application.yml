@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: booking-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/booking_db
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  # Redis configurations
+  redis:
+    cache:
+      host: localhost
+      port: 6379
+    pubsub:
+      host: localhost
+      port: 6383
+
+server:
+  port: 8082
+
+# Redisson for Distributed Locks
+redisson:
+  address: redis://localhost:6384
+  connection-pool-size: 64
+  connection-minimum-idle-size: 10
+  timeout: 5000
+  retry-attempts: 3
+  retry-interval: 1500
+
+cache:
+  ttl:
+    bookings: 300
+
+logging:
+  level:
+    com.analytics.booking: DEBUG
