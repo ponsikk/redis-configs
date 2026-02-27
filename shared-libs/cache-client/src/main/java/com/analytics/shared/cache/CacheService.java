@@ -53,4 +53,12 @@ public class CacheService {
         cacheRedisTemplate.delete(key);
         log.info("Invalidated cache key: {}", key);
     }
+
+    public void invalidatePattern(String pattern) {
+        var keys = cacheRedisTemplate.keys(pattern);
+        if (keys != null && !keys.isEmpty()) {
+            cacheRedisTemplate.delete(keys);
+            log.info("Invalidated {} cache keys matching pattern: {}", keys.size(), pattern);
+        }
+    }
 }
