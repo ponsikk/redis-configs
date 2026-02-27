@@ -131,14 +131,23 @@ jobs:
       run: |
         echo "=== Building shared-libs ==="
 
+        echo "Building redis-config..."
         cd $GITHUB_WORKSPACE/shared-libs/redis-config
-        mvn clean install -DskipTests
+        mvn clean install -DskipTests -X | tail -50
 
+        echo "Building cache-client..."
         cd $GITHUB_WORKSPACE/shared-libs/cache-client
-        mvn clean install -DskipTests
+        mvn clean install -DskipTests -X | tail -50
 
+        echo "Building event-bus..."
         cd $GITHUB_WORKSPACE/shared-libs/event-bus
-        mvn clean install -DskipTests
+        mvn clean install -DskipTests -X | tail -50
+
+        echo "=== Verifying installed artifacts in local Maven repo ==="
+        ls -la ~/.m2/repository/com/analytics/shared/
+        ls -la ~/.m2/repository/com/analytics/shared/redis-config/
+        ls -la ~/.m2/repository/com/analytics/shared/cache-client/
+        ls -la ~/.m2/repository/com/analytics/shared/event-bus/
 
         echo "✅ Shared libraries built successfully!"
 
